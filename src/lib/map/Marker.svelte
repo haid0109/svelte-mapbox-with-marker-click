@@ -1,6 +1,8 @@
 <script>
-  import { onMount, getContext } from 'svelte'
+  import { onMount, getContext, createEventDispatcher } from 'svelte'
   import { contextKey } from '../mapbox.js'
+
+  const dispatch = createEventDispatcher();
 
   const { getMap, getMapbox } = getContext(contextKey)
   const map = getMap()
@@ -26,6 +28,7 @@
   export let markerOptions = {}
 
   let marker
+  let markerel;
   let element
   let elementPopup
 
@@ -39,6 +42,9 @@
       element.hasChildNodes() ? { element } : { color }
     )
     marker = new mapbox.Marker(Object.assign(namedParams, markerOptions))
+
+    markerel = marker.getElement()
+    markerel.addEventListener('click', (e) => dispatch('click', e))
   
     if (popup) {
       const namedPopupParams = { offset: popupOffset, className: popupClassName }
